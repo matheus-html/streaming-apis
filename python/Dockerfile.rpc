@@ -1,0 +1,11 @@
+FROM python:3.12-slim
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+WORKDIR /app
+COPY python/requirements-core.txt python/requirements-rpc.txt ./
+RUN pip install --no-cache-dir -r requirements-core.txt -r requirements-rpc.txt
+COPY proto ./proto
+COPY python/core ./core
+COPY python/rpc ./rpc
+RUN python -m grpc_tools.protoc -I proto --python_out=rpc --grpc_python_out=rpc proto/streaming.proto \
+    && sed -i 's/^import streaming_pb2 as/from . import streaming_pb2 as/' rpc/streaming_pb2_grpc.py
+CMD ["python", "-m", "rpc.servidor"]

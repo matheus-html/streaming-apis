@@ -134,16 +134,15 @@ services:
     build:
       context: ./python
       args:
-        MODULE: graphql
+        MODULE: gql
     environment: *python-env
 
   python-grpc:
     <<: *app
     profiles: ["python-grpc"]
     build:
-      context: ./python
-      args:
-        MODULE: grpc
+      context: .
+      dockerfile: python/Dockerfile.rpc
     environment: *python-env
 
   locust:
@@ -155,6 +154,7 @@ services:
     volumes:
       - ./loadtest:/app
       - ./analysis/results:/results
+      - ./proto:/proto:ro
 
 volumes:
   pgdata:

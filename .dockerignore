@@ -1,0 +1,10 @@
+.git
+analysis
+docs
+java
+loadtest
+scripts
+db
+**/__pycache__
+**/*.pyc
+python/rpc/streaming_pb2*.py

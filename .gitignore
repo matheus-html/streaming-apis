@@ -7,3 +7,4 @@ target/
 *.log
 analysis/results/tmp/
 analysis/results/piloto-*
+python/rpc/streaming_pb2*.py

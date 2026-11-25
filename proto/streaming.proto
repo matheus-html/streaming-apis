@@ -1,0 +1,199 @@
+syntax = "proto3";
+
+package streaming;
+
+import "google/protobuf/struct.proto";
+
+message Vazio {}
+
+message IdRequisicao {
+  int32 id = 1;
+}
+
+message ListarRequisicao {
+  optional int32 pagina = 1;
+  optional int32 tamanho = 2;
+  optional string nome = 3;
+}
+
+message ListarRelacionadosRequisicao {
+  int32 id = 1;
+  optional int32 pagina = 2;
+  optional int32 tamanho = 3;
+}
+
+message ListaTexto {
+  repeated string valores = 1;
+}
+
+message ListaInteiros {
+  repeated int32 valores = 1;
+}
+
+message Usuario {
+  int32 id = 1;
+  string nome = 2;
+  int32 idade = 3;
+  string email = 4;
+  string username = 5;
+  string pais = 6;
+  string cidade = 7;
+  string plano = 8;
+  string data_cadastro = 9;
+  string ultimo_acesso = 10;
+  string bio = 11;
+  string idioma = 12;
+  string tema = 13;
+  repeated string generos_favoritos = 14;
+  string avatar_url = 15;
+  google.protobuf.Struct preferencias = 16;
+  google.protobuf.ListValue historico_recente = 17;
+}
+
+message Musica {
+  int32 id = 1;
+  string nome = 2;
+  string artista = 3;
+  string album = 4;
+  int32 ano_lancamento = 5;
+  int32 numero_faixa = 6;
+  int32 duracao_ms = 7;
+  string genero = 8;
+  string idioma = 9;
+  bool explicita = 10;
+  string isrc = 11;
+  string gravadora = 12;
+  int32 popularidade = 13;
+  string letra = 14;
+  repeated string compositores = 15;
+  repeated string produtores = 16;
+  repeated string tags = 17;
+  google.protobuf.Struct audio = 18;
+}
+
+message Playlist {
+  int32 id = 1;
+  string nome = 2;
+  int32 usuario_id = 3;
+  string descricao = 4;
+  bool publica = 5;
+  bool colaborativa = 6;
+  string criada_em = 7;
+  string atualizada_em = 8;
+  string capa_url = 9;
+  repeated string tags = 10;
+  int64 total_musicas = 11;
+  int64 duracao_total_ms = 12;
+  repeated int32 musica_ids = 13;
+}
+
+message PaginaUsuarios {
+  repeated Usuario itens = 1;
+  int32 pagina = 2;
+  int32 tamanho = 3;
+  int64 total = 4;
+}
+
+message PaginaMusicas {
+  repeated Musica itens = 1;
+  int32 pagina = 2;
+  int32 tamanho = 3;
+  int64 total = 4;
+}
+
+message PaginaPlaylists {
+  repeated Playlist itens = 1;
+  int32 pagina = 2;
+  int32 tamanho = 3;
+  int64 total = 4;
+}
+
+message UsuarioEntrada {
+  optional string nome = 1;
+  optional int32 idade = 2;
+  optional string email = 3;
+  optional string username = 4;
+  optional string pais = 5;
+  optional string cidade = 6;
+  optional string plano = 7;
+  optional string bio = 8;
+  optional string idioma = 9;
+  optional string tema = 10;
+  ListaTexto generos_favoritos = 11;
+  optional string avatar_url = 12;
+  google.protobuf.Struct preferencias = 13;
+  google.protobuf.ListValue historico_recente = 14;
+}
+
+message MusicaEntrada {
+  optional string nome = 1;
+  optional string artista = 2;
+  optional string album = 3;
+  optional int32 ano_lancamento = 4;
+  optional int32 numero_faixa = 5;
+  optional int32 duracao_ms = 6;
+  optional string genero = 7;
+  optional string idioma = 8;
+  optional bool explicita = 9;
+  optional string isrc = 10;
+  optional string gravadora = 11;
+  optional int32 popularidade = 12;
+  optional string letra = 13;
+  ListaTexto compositores = 14;
+  ListaTexto produtores = 15;
+  ListaTexto tags = 16;
+  google.protobuf.Struct audio = 17;
+}
+
+message PlaylistEntrada {
+  optional string nome = 1;
+  optional int32 usuario_id = 2;
+  optional string descricao = 3;
+  optional bool publica = 4;
+  optional bool colaborativa = 5;
+  optional string capa_url = 6;
+  ListaTexto tags = 7;
+  ListaInteiros musica_ids = 8;
+}
+
+message UsuarioAtualizacao {
+  int32 id = 1;
+  UsuarioEntrada entrada = 2;
+}
+
+message MusicaAtualizacao {
+  int32 id = 1;
+  MusicaEntrada entrada = 2;
+}
+
+message PlaylistAtualizacao {
+  int32 id = 1;
+  PlaylistEntrada entrada = 2;
+}
+
+service UsuarioService {
+  rpc Listar(ListarRequisicao) returns (PaginaUsuarios);
+  rpc Obter(IdRequisicao) returns (Usuario);
+  rpc Criar(UsuarioEntrada) returns (Usuario);
+  rpc Atualizar(UsuarioAtualizacao) returns (Usuario);
+  rpc Remover(IdRequisicao) returns (Vazio);
+  rpc ListarPlaylists(ListarRelacionadosRequisicao) returns (PaginaPlaylists);
+}
+
+service MusicaService {
+  rpc Listar(ListarRequisicao) returns (PaginaMusicas);
+  rpc Obter(IdRequisicao) returns (Musica);
+  rpc Criar(MusicaEntrada) returns (Musica);
+  rpc Atualizar(MusicaAtualizacao) returns (Musica);
+  rpc Remover(IdRequisicao) returns (Vazio);
+  rpc ListarPlaylists(ListarRelacionadosRequisicao) returns (PaginaPlaylists);
+}
+
+service PlaylistService {
+  rpc Listar(ListarRequisicao) returns (PaginaPlaylists);
+  rpc Obter(IdRequisicao) returns (Playlist);
+  rpc Criar(PlaylistEntrada) returns (Playlist);
+  rpc Atualizar(PlaylistAtualizacao) returns (Playlist);
+  rpc Remover(IdRequisicao) returns (Vazio);
+  rpc ListarMusicas(ListarRelacionadosRequisicao) returns (PaginaMusicas);
+}
