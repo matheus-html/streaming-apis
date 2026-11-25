@@ -1,3 +1,10 @@
+.git
+analysis
+docs
+loadtest
+scripts
+db
 **/target
-**/.idea
-**/*.iml
+**/__pycache__
+**/*.pyc
+python/rpc/streaming_pb2*.py

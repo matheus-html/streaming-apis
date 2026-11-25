@@ -106,9 +106,8 @@ services:
     <<: *app
     profiles: ["java-grpc"]
     build:
-      context: ./java
-      args:
-        MODULE: grpc
+      context: .
+      dockerfile: java/Dockerfile.grpc
     environment: *java-env
 
   python-rest:
