@@ -1,0 +1,160 @@
+name: streaming-apis
+
+x-app-env: &app-env
+  DB_HOST: db
+  DB_PORT: "5432"
+  DB_NAME: streaming
+  DB_USER: streaming
+  DB_PASSWORD: streaming
+  POOL_SIZE: "16"
+  PORT: "8080"
+
+x-java-env: &java-env
+  <<: *app-env
+  JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
+
+x-python-env: &python-env
+  <<: *app-env
+  WORKERS: "2"
+
+x-app: &app
+  cpus: ${APP_CPUS}
+  mem_limit: ${APP_MEM}
+  ports:
+    - "8080:8080"
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: postgres:16
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - max_connections=200
+      - -c
+      - log_min_messages=warning
+    environment:
+      POSTGRES_USER: streaming
+      POSTGRES_PASSWORD: streaming
+      POSTGRES_DB: postgres
+    cpus: ${DB_CPUS}
+    mem_limit: ${DB_MEM}
+    shm_size: 256mb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U streaming -d postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+
+  seed:
+    image: python:3.12-slim
+    profiles: ["tools"]
+    working_dir: /seed
+    volumes:
+      - ./db:/seed:ro
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_USER: streaming
+      DB_PASSWORD: streaming
+      PYTHONDONTWRITEBYTECODE: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - sh
+      - -c
+      - pip install --no-cache-dir -q "psycopg[binary]>=3.2,<4" && python seed.py
+
+  java-rest:
+    <<: *app
+    profiles: ["java-rest"]
+    build:
+      context: ./java
+      args:
+        MODULE: rest
+    environment: *java-env
+
+  java-soap:
+    <<: *app
+    profiles: ["java-soap"]
+    build:
+      context: ./java
+      args:
+        MODULE: soap
+    environment: *java-env
+
+  java-graphql:
+    <<: *app
+    profiles: ["java-graphql"]
+    build:
+      context: ./java
+      args:
+        MODULE: graphql
+    environment: *java-env
+
+  java-grpc:
+    <<: *app
+    profiles: ["java-grpc"]
+    build:
+      context: ./java
+      args:
+        MODULE: grpc
+    environment: *java-env
+
+  python-rest:
+    <<: *app
+    profiles: ["python-rest"]
+    build:
+      context: ./python
+      args:
+        MODULE: rest
+    environment: *python-env
+
+  python-soap:
+    <<: *app
+    profiles: ["python-soap"]
+    build:
+      context: ./python
+      args:
+        MODULE: soap
+    environment: *python-env
+
+  python-graphql:
+    <<: *app
+    profiles: ["python-graphql"]
+    build:
+      context: ./python
+      args:
+        MODULE: graphql
+    environment: *python-env
+
+  python-grpc:
+    <<: *app
+    profiles: ["python-grpc"]
+    build:
+      context: ./python
+      args:
+        MODULE: grpc
+    environment: *python-env
+
+  locust:
+    profiles: ["loadtest"]
+    build: ./loadtest
+    cpus: ${LOCUST_CPUS}
+    mem_limit: ${LOCUST_MEM}
+    working_dir: /app
+    volumes:
+      - ./loadtest:/app
+      - ./analysis/results:/results
+
+volumes:
+  pgdata:

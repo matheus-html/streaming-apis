@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+target/
+.idea/
+.vscode/
+*.log
+analysis/results/tmp/
+analysis/results/piloto-*
