@@ -35,6 +35,7 @@ USUARIOS_INICIAIS = 50
 FATOR_SONDA = 2
 PORTA = 8080
 PAUSA_ENTRE_NIVEIS = 5
+PROCESSOS = 1
 
 
 def executar(comando, **opcoes):
@@ -122,6 +123,7 @@ def rodar_locust(versao, arquivo, usuarios, modo, etiqueta):
         "locust", "-f", f"/app/{arquivo}", "--host", f"http://{versao}:{PORTA}",
         "--headless", "-u", str(usuarios), "-r", str(taxa), "-t", f"{duracao}s",
         "--only-summary", "--csv", f"/results/tmp/{etiqueta}",
+        *(["--processes", str(PROCESSOS)] if PROCESSOS > 1 else []),
     ])
     caminho = TMP / f"{etiqueta}_stats.csv"
     if not caminho.exists():
@@ -267,8 +269,11 @@ def main():
     analisador.add_argument("--fase", choices=["consultas", "crud"], default="consultas")
     analisador.add_argument("--modo", choices=list(MODOS), default="completo")
     analisador.add_argument("--maximo", type=int, default=12800)
+    analisador.add_argument("--processos", type=int, default=1)
     analisador.add_argument("--refazer", action="store_true")
     argumentos = analisador.parse_args()
+    global PROCESSOS
+    PROCESSOS = max(argumentos.processos, 1)
     versoes = VERSOES if argumentos.versoes == ["todas"] else argumentos.versoes
     invalidas = [v for v in versoes if v not in VERSOES]
     if invalidas:
