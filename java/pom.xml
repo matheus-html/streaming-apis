@@ -24,5 +24,6 @@
         <module>core</module>
         <module>rest</module>
         <module>soap</module>
+        <module>graphql</module>
     </modules>
 </project>

@@ -1,0 +1,151 @@
+scalar JSON
+
+type Query {
+  usuarios(pagina: Int, tamanho: Int, nome: String): UsuarioPagina!
+  usuario(id: Int!): Usuario!
+  musicas(pagina: Int, tamanho: Int, nome: String): MusicaPagina!
+  musica(id: Int!): Musica!
+  playlists(pagina: Int, tamanho: Int, nome: String): PlaylistPagina!
+  playlist(id: Int!): Playlist!
+  playlistsDoUsuario(usuarioId: Int!, pagina: Int, tamanho: Int): PlaylistPagina!
+  musicasDaPlaylist(playlistId: Int!, pagina: Int, tamanho: Int): MusicaPagina!
+  playlistsDaMusica(musicaId: Int!, pagina: Int, tamanho: Int): PlaylistPagina!
+}
+
+type Mutation {
+  criarUsuario(entrada: UsuarioEntrada!): Usuario!
+  atualizarUsuario(id: Int!, entrada: UsuarioEntrada!): Usuario!
+  removerUsuario(id: Int!): Boolean!
+  criarMusica(entrada: MusicaEntrada!): Musica!
+  atualizarMusica(id: Int!, entrada: MusicaEntrada!): Musica!
+  removerMusica(id: Int!): Boolean!
+  criarPlaylist(entrada: PlaylistEntrada!): Playlist!
+  atualizarPlaylist(id: Int!, entrada: PlaylistEntrada!): Playlist!
+  removerPlaylist(id: Int!): Boolean!
+}
+
+type Usuario {
+  id: Int!
+  nome: String!
+  idade: Int!
+  email: String!
+  username: String!
+  pais: String!
+  cidade: String!
+  plano: String!
+  dataCadastro: String!
+  ultimoAcesso: String!
+  bio: String!
+  idioma: String!
+  tema: String!
+  generosFavoritos: [String!]!
+  avatarUrl: String!
+  preferencias: JSON!
+  historicoRecente: JSON!
+}
+
+type Musica {
+  id: Int!
+  nome: String!
+  artista: String!
+  album: String!
+  anoLancamento: Int!
+  numeroFaixa: Int!
+  duracaoMs: Int!
+  genero: String!
+  idioma: String!
+  explicita: Boolean!
+  isrc: String!
+  gravadora: String!
+  popularidade: Int!
+  letra: String!
+  compositores: [String!]!
+  produtores: [String!]!
+  tags: [String!]!
+  audio: JSON!
+}
+
+type Playlist {
+  id: Int!
+  nome: String!
+  usuarioId: Int!
+  descricao: String!
+  publica: Boolean!
+  colaborativa: Boolean!
+  criadaEm: String!
+  atualizadaEm: String!
+  capaUrl: String!
+  tags: [String!]!
+  totalMusicas: Int!
+  duracaoTotalMs: Int!
+  musicaIds: [Int!]!
+}
+
+type UsuarioPagina {
+  itens: [Usuario!]!
+  pagina: Int!
+  tamanho: Int!
+  total: Int!
+}
+
+type MusicaPagina {
+  itens: [Musica!]!
+  pagina: Int!
+  tamanho: Int!
+  total: Int!
+}
+
+type PlaylistPagina {
+  itens: [Playlist!]!
+  pagina: Int!
+  tamanho: Int!
+  total: Int!
+}
+
+input UsuarioEntrada {
+  nome: String
+  idade: Int
+  email: String
+  username: String
+  pais: String
+  cidade: String
+  plano: String
+  bio: String
+  idioma: String
+  tema: String
+  generosFavoritos: [String!]
+  avatarUrl: String
+  preferencias: JSON
+  historicoRecente: JSON
+}
+
+input MusicaEntrada {
+  nome: String
+  artista: String
+  album: String
+  anoLancamento: Int
+  numeroFaixa: Int
+  duracaoMs: Int
+  genero: String
+  idioma: String
+  explicita: Boolean
+  isrc: String
+  gravadora: String
+  popularidade: Int
+  letra: String
+  compositores: [String!]
+  produtores: [String!]
+  tags: [String!]
+  audio: JSON
+}
+
+input PlaylistEntrada {
+  nome: String
+  usuarioId: Int
+  descricao: String
+  publica: Boolean
+  colaborativa: Boolean
+  capaUrl: String
+  tags: [String!]
+  musicaIds: [Int!]
+}
