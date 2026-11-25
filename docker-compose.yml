@@ -11,6 +11,7 @@ x-app-env: &app-env
 
 x-java-env: &java-env
   <<: *app-env
+  POOL_SIZE: "32"
   JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=75"
 
 x-python-env: &python-env
