@@ -4,8 +4,10 @@ param(
     [string]$Perfil
 )
 
-$ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)
 
-docker compose --profile $Perfil rm -sf $Perfil
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$anterior = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+docker compose --profile $Perfil rm -sf $Perfil 2>&1 | Out-Null
+$ErrorActionPreference = $anterior
+exit 0
