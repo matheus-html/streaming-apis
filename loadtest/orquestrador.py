@@ -36,6 +36,7 @@ FATOR_SONDA = 2
 PORTA = 8080
 PAUSA_ENTRE_NIVEIS = 5
 PROCESSOS = 1
+AQUECIMENTO_REFINO = 3200
 
 
 def executar(comando, **opcoes):
@@ -273,6 +274,16 @@ def processar_versao(versao, fase, modo, maximo, refazer, rodar=rodar_locust, pr
         )
 
     if niveis_extra is not None:
+        descartar = set(niveis_extra)
+        for usuarios in descartar:
+            for repeticao in range(1, REPETICOES + 1):
+                registro.dados["niveis"].pop(f"real:{usuarios}:{repeticao}", None)
+        registro.dados["real"] = [n for n in registro.dados["real"] if n["usuarios"] not in descartar]
+        registro.dados["refinado"] = [u for u in registro.dados.get("refinado", []) if u not in descartar]
+        preparar(versao)
+        preparado = True
+        aquecida = rodar(versao, arquivo, AQUECIMENTO_REFINO, modo, f"{versao}-aquecimento")
+        print(f"[{versao}] aquecimento {AQUECIMENTO_REFINO}u (descartado): {resumo(aquecida)}")
         return refinar(registro, medir_real, versao, niveis_extra)
 
     config = MODOS[modo]
