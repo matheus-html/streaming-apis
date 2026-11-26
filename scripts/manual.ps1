@@ -1,7 +1,8 @@
 param(
     [ValidateSet("java-rest", "java-soap", "java-graphql", "java-grpc", "python-rest", "python-soap", "python-graphql", "python-grpc")]
     [string]$Versao,
-    [switch]$Manter
+    [switch]$Manter,
+    [switch]$SemReset
 )
 
 $ErrorActionPreference = "Continue"
@@ -30,6 +31,15 @@ foreach ($v in $todas) {
 
 docker compose up -d --wait db
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+if (-not $SemReset) {
+    Write-Host "Resetando o banco para o estado inicial (5000 usuarios, 20000 musicas, 15000 playlists)..."
+    & (Join-Path $PSScriptRoot "banco-resetar.ps1") | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "Falha ao resetar o banco."
+        exit $LASTEXITCODE
+    }
+}
 
 docker compose --profile $Versao up -d --build
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
