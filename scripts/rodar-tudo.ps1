@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidateSet("rapido", "completo")]
     [string]$Modo = "rapido",
     [switch]$Retomar
@@ -9,7 +9,7 @@ Set-Location (Split-Path $PSScriptRoot -Parent)
 $raiz = Get-Location
 
 Add-Type -Namespace Energia -Name Janela -MemberDefinition '[System.Runtime.InteropServices.DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint estado);'
-[Energia.Janela]::SetThreadExecutionState(0x80000001) | Out-Null
+[Energia.Janela]::SetThreadExecutionState([uint32]2147483649) | Out-Null
 
 $inicio = Get-Date
 Start-Transcript -Path (Join-Path $raiz "analysis\rodar-tudo.log") -Append | Out-Null
@@ -47,5 +47,5 @@ if (Test-Path (Join-Path $raiz "analysis\graficos.py")) {
 $minutos = [math]::Round(((Get-Date) - $inicio).TotalMinutes, 1)
 Write-Host ""
 Write-Host "TUDO CONCLUIDO em $minutos min"
-[Energia.Janela]::SetThreadExecutionState(0x80000000) | Out-Null
+[Energia.Janela]::SetThreadExecutionState([uint32]2147483648) | Out-Null
 Stop-Transcript | Out-Null
