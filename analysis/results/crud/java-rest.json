@@ -175,6 +175,39 @@
       "p99Ms": 14000.0,
       "usuarios": 15360,
       "segundos": 24.2
+    },
+    "real:11264:1": {
+      "requisicoes": 22965,
+      "falhas": 18624,
+      "taxaFalha": 0.8109732201175702,
+      "rps": 1255.70146950362,
+      "mediaMs": 5484.607898464521,
+      "p95Ms": 9300.0,
+      "p99Ms": 10000.0,
+      "usuarios": 11264,
+      "segundos": 24.0
+    },
+    "real:11264:2": {
+      "requisicoes": 27870,
+      "falhas": 6774,
+      "taxaFalha": 0.24305705059203445,
+      "rps": 1567.7003553138006,
+      "mediaMs": 4491.584686652335,
+      "p95Ms": 8600.0,
+      "p99Ms": 11000.0,
+      "usuarios": 11264,
+      "segundos": 24.3
+    },
+    "real:11264:3": {
+      "requisicoes": 34847,
+      "falhas": 3089,
+      "taxaFalha": 0.08864464659798547,
+      "rps": 2226.7605237575985,
+      "mediaMs": 3492.4884756671945,
+      "p95Ms": 10000.0,
+      "p99Ms": 12000.0,
+      "usuarios": 11264,
+      "segundos": 24.2
     }
   },
   "versao": "java-rest",
@@ -226,6 +259,45 @@
       "falhou": false
     },
     {
+      "usuarios": 11264,
+      "repeticoes": [
+        {
+          "requisicoes": 22965,
+          "falhas": 18624,
+          "taxaFalha": 0.8109732201175702,
+          "rps": 1255.70146950362,
+          "mediaMs": 5484.607898464521,
+          "p95Ms": 9300.0,
+          "p99Ms": 10000.0,
+          "usuarios": 11264,
+          "segundos": 24.0
+        },
+        {
+          "requisicoes": 27870,
+          "falhas": 6774,
+          "taxaFalha": 0.24305705059203445,
+          "rps": 1567.7003553138006,
+          "mediaMs": 4491.584686652335,
+          "p95Ms": 8600.0,
+          "p99Ms": 11000.0,
+          "usuarios": 11264,
+          "segundos": 24.3
+        },
+        {
+          "requisicoes": 34847,
+          "falhas": 3089,
+          "taxaFalha": 0.08864464659798547,
+          "rps": 2226.7605237575985,
+          "mediaMs": 3492.4884756671945,
+          "p95Ms": 10000.0,
+          "p99Ms": 12000.0,
+          "usuarios": 11264,
+          "segundos": 24.2
+        }
+      ],
+      "falhou": true
+    },
+    {
       "usuarios": 15360,
       "repeticoes": [
         {
@@ -266,5 +338,8 @@
     }
   ],
   "capacidade": 10240,
-  "concluido": true
+  "concluido": true,
+  "refinado": [
+    11264
+  ]
 }

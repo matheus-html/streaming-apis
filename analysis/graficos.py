@@ -72,7 +72,7 @@ def agregar(registro):
     pontos = []
     for usuarios in sorted(por_nivel):
         medidas = por_nivel[usuarios]
-        rps = [m["rps"] for m in medidas]
+        rps = [m["rps"] * (1 - m["taxaFalha"]) for m in medidas]
         falha = [m["taxaFalha"] * 100 for m in medidas]
         pontos.append({
             "usuarios": usuarios,
@@ -117,7 +117,7 @@ def desenhar_serie(eixo, pontos, chave, api, linguagem, rotulo=None):
 
 
 def preparar_eixos(eixo_rps, eixo_falha):
-    eixo_rps.set_ylabel("Vazão (req/s)")
+    eixo_rps.set_ylabel("Vazão útil (req/s, sem falhas)")
     eixo_rps.set_ylim(bottom=0)
     eixo_falha.set_ylabel("Taxa de falha (%)")
     eixo_falha.set_xlabel("Usuários simultâneos")
@@ -271,7 +271,7 @@ def resumir(fase, dados):
                 "versao": f"{linguagem}-{api}",
                 "capacidade_usuarios": capacidade,
                 "limitado_pelo_teste": "sim" if limitado_pelo_teste(registro) else "nao",
-                "vazao_maxima_rps": round(vazao_maxima(registro), 1),
+                "vazao_util_maxima_rps": round(vazao_maxima(registro), 1),
                 "p95_na_capacidade_ms": round(p95),
                 "falha_na_capacidade_pct": round(falhas, 2),
             })
@@ -280,7 +280,7 @@ def resumir(fase, dados):
 
 def salvar_resumo(todas):
     SAIDA.mkdir(parents=True, exist_ok=True)
-    colunas = ["fase", "versao", "capacidade_usuarios", "limitado_pelo_teste", "vazao_maxima_rps",
+    colunas = ["fase", "versao", "capacidade_usuarios", "limitado_pelo_teste", "vazao_util_maxima_rps",
                "p95_na_capacidade_ms", "falha_na_capacidade_pct"]
     with open(SAIDA / "resumo.csv", "w", encoding="utf-8", newline="") as arquivo:
         escritor = csv.DictWriter(arquivo, fieldnames=colunas)
@@ -310,7 +310,8 @@ def principal():
         ))
         print(barras(
             fase, dados, vazao_maxima,
-            "Vazão máxima observada (req/s)", "Requisições por segundo",
+            "Vazão útil máxima observada (requisições com sucesso por segundo)",
+            "Requisições com sucesso por segundo",
             f"vazao_{fase}.png", False,
         ))
         for item in resumir(fase, dados):

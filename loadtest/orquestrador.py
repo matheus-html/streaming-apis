@@ -208,17 +208,42 @@ def resumo(medida):
     )
 
 
-def processar_versao(versao, fase, modo, maximo, refazer, rodar=rodar_locust, preparar=preparar_versao):
+def refinar(registro, medir_real, versao, niveis):
+    novos, _ = testar_real(medir_real, sorted(set(niveis)))
+    existentes = {nivel["usuarios"]: nivel for nivel in registro.dados["real"]}
+    for nivel in novos:
+        existentes[nivel["usuarios"]] = nivel
+    reais = [existentes[usuarios] for usuarios in sorted(existentes)]
+    capacidade = 0
+    for nivel in reais:
+        if nivel["falhou"]:
+            break
+        capacidade = nivel["usuarios"]
+    anteriores = set(registro.dados.get("refinado", []))
+    registro.dados["real"] = reais
+    registro.dados["capacidade"] = capacidade
+    registro.dados["refinado"] = sorted(anteriores | {nivel["usuarios"] for nivel in novos})
+    registro.salvar()
+    print(f"[{versao}] capacidade máxima após refinamento: {capacidade} usuários")
+    return registro.dados
+
+
+def processar_versao(versao, fase, modo, maximo, refazer, rodar=rodar_locust, preparar=preparar_versao,
+                     niveis_extra=None):
     api = versao.split("-", 1)[1]
     arquivo = LOCUSTFILES[(fase, api)]
     if not (Path(__file__).parent / arquivo).exists():
         print(f"[{versao}] ainda não existe loadtest/{arquivo}, pulando")
         return None
     registro = Registro(RESULTADOS / fase / f"{versao}.json", refazer)
-    if registro.dados.get("concluido"):
+    if niveis_extra is None and registro.dados.get("concluido"):
         print(f"[{versao}] já concluída ({registro.dados['capacidade']} usuários), pulando")
         return registro.dados
-    registro.dados.update({"versao": versao, "fase": fase, "modo": modo})
+    if niveis_extra is not None and not registro.dados.get("concluido"):
+        print(f"[{versao}] sem medição anterior para refinar, pulando")
+        return None
+    if niveis_extra is None:
+        registro.dados.update({"versao": versao, "fase": fase, "modo": modo})
     preparado = False
 
     def medir_nivel(chave, usuarios, etiqueta, rotulo):
@@ -247,6 +272,9 @@ def processar_versao(versao, fase, modo, maximo, refazer, rodar=rodar_locust, pr
             f"real {usuarios}u rep {repeticao}",
         )
 
+    if niveis_extra is not None:
+        return refinar(registro, medir_real, versao, niveis_extra)
+
     config = MODOS[modo]
     ultimo_ok, primeiro_ruim = sondar(medir_sonda, maximo, config["passos_bissecao"])
     print(f"[{versao}] sonda: maior nível ok {ultimo_ok}, primeiro com falha {primeiro_ruim}")
@@ -270,6 +298,7 @@ def main():
     analisador.add_argument("--modo", choices=list(MODOS), default="completo")
     analisador.add_argument("--maximo", type=int, default=12800)
     analisador.add_argument("--processos", type=int, default=1)
+    analisador.add_argument("--niveis", nargs="+", type=int, default=None)
     analisador.add_argument("--refazer", action="store_true")
     argumentos = analisador.parse_args()
     global PROCESSOS
@@ -280,7 +309,10 @@ def main():
         sys.exit(f"versões inválidas: {invalidas}")
     inicio = time.time()
     for versao in versoes:
-        processar_versao(versao, argumentos.fase, argumentos.modo, argumentos.maximo, argumentos.refazer)
+        processar_versao(
+            versao, argumentos.fase, argumentos.modo, argumentos.maximo, argumentos.refazer,
+            niveis_extra=argumentos.niveis,
+        )
     parar_aplicacoes()
     print(f"concluído em {(time.time() - inicio) / 60:.1f} min")
 

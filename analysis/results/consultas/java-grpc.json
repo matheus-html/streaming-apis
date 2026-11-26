@@ -296,6 +296,39 @@
       "p99Ms": 7400.0,
       "usuarios": 8000,
       "segundos": 23.9
+    },
+    "real:8250:1": {
+      "requisicoes": 22402,
+      "falhas": 12641,
+      "taxaFalha": 0.5642799750022319,
+      "rps": 1235.5900106262993,
+      "mediaMs": 5703.204447913597,
+      "p95Ms": 8800.0,
+      "p99Ms": 9600.0,
+      "usuarios": 8250,
+      "segundos": 24.4
+    },
+    "real:8250:2": {
+      "requisicoes": 21706,
+      "falhas": 176,
+      "taxaFalha": 0.008108357136275684,
+      "rps": 1208.4999925731092,
+      "mediaMs": 4864.863158074223,
+      "p95Ms": 7600.0,
+      "p99Ms": 8500.0,
+      "usuarios": 8250,
+      "segundos": 23.9
+    },
+    "real:8250:3": {
+      "requisicoes": 22903,
+      "falhas": 525,
+      "taxaFalha": 0.02292276121032179,
+      "rps": 1263.4855361690834,
+      "mediaMs": 4817.553811914208,
+      "p95Ms": 8500.0,
+      "p99Ms": 8600.0,
+      "usuarios": 8250,
+      "segundos": 24.0
     }
   },
   "versao": "java-grpc",
@@ -501,8 +534,50 @@
         }
       ],
       "falhou": false
+    },
+    {
+      "usuarios": 8250,
+      "repeticoes": [
+        {
+          "requisicoes": 22402,
+          "falhas": 12641,
+          "taxaFalha": 0.5642799750022319,
+          "rps": 1235.5900106262993,
+          "mediaMs": 5703.204447913597,
+          "p95Ms": 8800.0,
+          "p99Ms": 9600.0,
+          "usuarios": 8250,
+          "segundos": 24.4
+        },
+        {
+          "requisicoes": 21706,
+          "falhas": 176,
+          "taxaFalha": 0.008108357136275684,
+          "rps": 1208.4999925731092,
+          "mediaMs": 4864.863158074223,
+          "p95Ms": 7600.0,
+          "p99Ms": 8500.0,
+          "usuarios": 8250,
+          "segundos": 23.9
+        },
+        {
+          "requisicoes": 22903,
+          "falhas": 525,
+          "taxaFalha": 0.02292276121032179,
+          "rps": 1263.4855361690834,
+          "mediaMs": 4817.553811914208,
+          "p95Ms": 8500.0,
+          "p99Ms": 8600.0,
+          "usuarios": 8250,
+          "segundos": 24.0
+        }
+      ],
+      "falhou": true
     }
   ],
   "capacidade": 8000,
-  "concluido": true
+  "concluido": true,
+  "refinado": [
+    8250
+  ]
 }
