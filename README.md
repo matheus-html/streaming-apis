@@ -55,8 +55,8 @@ proto/                 contrato gRPC (streaming.proto)
 db/                    schema.sql e seed.py
 java/                  core (regras), rest, soap, graphql, grpc (Spring Boot 3.3.5, Java 21)
 python/                core (regras), rest, soap, gql, rpc (Python 3.12, FastAPI, Strawberry, grpcio)
-loadtest/              scripts do Locust e orquestrador.py
-scripts/               automação em PowerShell
+loadtest/              scripts do Locust, orquestrador.py, manual.py e verificar.py
+scripts/               automação em PowerShell (inclui manual.ps1 e verificar-tudo.ps1)
 analysis/              resultados (JSON), graficos.py e gráficos (PNG)
 docs/                  analise-critica.md
 ```
@@ -120,6 +120,16 @@ Para explorar qualquer versão à mão (sem teste de carga), escolhendo a API e 
 
 O script lista as 8 versões, sobe a escolhida e abre um menu interativo para listar, buscar por nome, obter, criar, atualizar e remover usuários, músicas e playlists, e para as consultas relacionais. Ele mostra a requisição e a resposta no protocolo escolhido. Ao sair, a versão é parada.
 
+O banco é recriado a partir do modelo (5000 usuários, 20000 músicas, 15000 playlists) a cada execução do `manual.ps1`. Use `-SemReset` para manter os dados da sessão anterior e `-Manter` para deixar a versão no ar depois de sair.
+
+Para conferir de uma só vez que as 8 versões se comportam do mesmo jeito, há um verificador automático:
+
+```powershell
+.\scripts\verificar-tudo.ps1
+```
+
+Ele sobe cada versão com o banco recém-recriado e executa o mesmo roteiro nos 3 recursos: listar, buscar por nome, obter, criar, atualizar, remover, confirmar que o removido não é mais encontrado e consultar as relações. A saída termina com uma linha `RESULTADO <versao>: OK` por versão; qualquer falha aparece com o motivo. Também aceita um subconjunto: `.\scripts\verificar-tudo.ps1 -Versoes java-rest,python-grpc`.
+
 Também dá para explorar com ferramentas externas, com uma versão no ar:
 
 | API | Como explorar |
@@ -155,7 +165,8 @@ Também dá para explorar com ferramentas externas, com uma versão no ar:
 | Gráficos | `analysis/graficos.py` e `analysis/graficos/` |
 | Resultados brutos | `analysis/results/` |
 | Análise crítica | `docs/analise-critica.md` |
-| Modo manual | `scripts/manual.ps1` |
+| Modo manual interativo (cliente de cada protocolo) | `scripts/manual.ps1` e `loadtest/manual.py` |
+| Prova de paridade funcional entre as 8 versões | `scripts/verificar-tudo.ps1` e `loadtest/verificar.py` |
 
 ### Abertura (cerca de 1 minuto)
 
@@ -174,6 +185,9 @@ Cada usuário virtual espera a resposta antes de pedir de novo, como um cliente 
 
 **Como você garantiu uma comparação justa?**
 Mesmo Postgres, mesmo Compose, mesmos limites de CPU e memória (API 2 CPUs e 1 GB, banco 2 CPUs e 2 GB), uma versão de cada vez e o banco recriado a partir do mesmo modelo antes de cada versão. As conexões com o banco somam 32 nas duas linguagens (32 no Java; 2 processos de 16 no Python). O Python usa 2 processos porque a API tem 2 CPUs.
+
+**Como você sabe que as 8 versões fazem a mesma coisa?**
+Escrevi um verificador que roda o mesmo roteiro nas 8 versões: listar, buscar, criar, atualizar, remover e as consultas relacionadas, nos três recursos. Todas passaram, com o banco recriado antes de cada uma.
 
 **Por que o Java ganha tanto do Python?**
 Em Java as threads rodam em paralelo de verdade e o JIT compila o código quente. No Python, o código em Python puro (serialização, XML, GraphQL) fica limitado pelo interpretador, e só 2 processos ajudam. Não isolei cada fator em um experimento separado, então trato isso como explicação provável.
