@@ -114,3 +114,19 @@ Vazão útil máxima (requisições com sucesso por segundo):
 | gRPC | 1.266 | 533 | 3.812 | 626 |
 
 O "≥25.600" do gRPC em Java no CRUD é o maior nível testado, sem falhas: o gerador de carga saturou antes do servidor. Os valores têm resolução de cerca de ±10%, por causa do modo rápido. A análise completa, com as limitações, está em [`docs/analise-critica.md`](docs/analise-critica.md), e os gráficos estão em [`analysis/graficos/`](analysis/graficos/).
+
+### Gráficos
+
+Capacidade máxima por API e linguagem:
+
+![Capacidade máxima, fase 1 (consultas)](analysis/graficos/capacidade_consultas.png)
+
+![Capacidade máxima, fase 2 (CRUD)](analysis/graficos/capacidade_crud.png)
+
+Vazão útil máxima (requisições com sucesso por segundo):
+
+![Vazão útil, fase 1 (consultas)](analysis/graficos/vazao_consultas.png)
+
+![Vazão útil, fase 2 (CRUD)](analysis/graficos/vazao_crud.png)
+
+As curvas de carga contra falhas e vazão (com os níveis que falharam marcados com X e a linha de 5%) e a comparação entre linguagens estão em [`analysis/graficos/`](analysis/graficos/): `curvas_*` e `linguagens_*`.
