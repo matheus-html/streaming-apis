@@ -1,8 +1,6 @@
-# streaming-apis
+# Trabalho 6
 
 Comparação de quatro tecnologias de invocação de serviços remotos (SOAP, REST, GraphQL e gRPC), cada uma implementada em Java e em Python, para um mesmo serviço de streaming de música. As 8 versões usam o mesmo Postgres, o mesmo Docker Compose e os mesmos limites de CPU e memória, e foram submetidas a testes de carga com Locust para descobrir a capacidade máxima de cada uma.
-
-Trabalho de Computação Distribuída, UNIFOR. Autor: Matheus Holanda de Sá.
 
 ## Resultados
 
