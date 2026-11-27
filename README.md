@@ -10,7 +10,7 @@ Comparação de quatro tecnologias de invocação de serviços remotos (SOAP, RE
 
 **Banco.** Postgres 16, populado de forma determinística (semente 42): 5.000 usuários, 20.000 músicas, 15.000 playlists e 598.223 vínculos entre playlists e músicas. Os registros são grandes de propósito (texto longo, listas e JSON), para que a serialização pese de verdade. Antes de cada versão, o banco é recriado a partir de um modelo.
 
-**Ambiente igual para todas.** Mesmo Compose e mesmos limites: API com 2 CPUs e 1 GB, banco com 2 CPUs e 2 GB, uma versão por vez. O total de conexões com o banco é o mesmo: 32 no Java e 2 processos × 16 no Python.
+**Ambiente igual para todas.** Mesmo Compose e mesmos limites de recursos por container: a API roda com 2 núcleos lógicos e 1 GB de memória, o banco com 2 núcleos lógicos e 2 GB, e uma versão sobe por vez. O total de conexões com o banco é o mesmo: 32 no Java e 2 processos × 16 no Python.
 
 **Teste de carga.**
 - O Locust usa laço fechado: cada usuário virtual faz uma requisição e espera 0,5 s. Cinco segundos de aquecimento são descartados e há 15 s de medição por nível (modo rápido).
@@ -36,7 +36,7 @@ docs/                  analise-critica.md
 
 ## Como replicar
 
-Requisitos: Windows com PowerShell, Docker Desktop (WSL2) com pelo menos 8 CPUs e 8 GB de memória, Git e Python 3. Para os gráficos: `pip install matplotlib`. Java e Maven não precisam estar instalados, porque tudo compila dentro do Docker. Todos os comandos rodam na raiz do projeto.
+Requisitos: Windows com PowerShell, Docker Desktop (WSL2), Git e Python 3. Para os gráficos: `pip install matplotlib`. Java e Maven não precisam estar instalados, porque tudo compila dentro do Docker. Todos os comandos rodam na raiz do projeto.
 
 **1. Conferir o ambiente:**
 
